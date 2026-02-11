@@ -62,7 +62,7 @@ export const projects: ReadonlyArray<Project> = [
     icon: Circle,
     theme: 'orange',
     link: 'https://book-now-xi.vercel.app/',
-    previewImage: preview('https://book-now-xi.vercel.app/'),
+    previewImage: '/book.png',
     size: 'small',
   },
   {
@@ -74,7 +74,7 @@ export const projects: ReadonlyArray<Project> = [
     icon: Smartphone,
     theme: 'violet',
     link: 'https://l-elite-gastro.vercel.app/',
-    previewImage: preview('https://l-elite-gastro.vercel.app/'),
+    previewImage: '/elite.png',
     size: 'small',
   },
   {
@@ -86,7 +86,7 @@ export const projects: ReadonlyArray<Project> = [
     icon: Monitor,
     theme: 'rose',
     link: 'https://aura-hotel-system.vercel.app/',
-    previewImage: preview('https://aura-hotel-system.vercel.app/'),
+    previewImage: '/aura.png',
     size: 'large',
   },
   {
@@ -98,7 +98,7 @@ export const projects: ReadonlyArray<Project> = [
     icon: Box,
     theme: 'yellow',
     link: 'https://proptech-seven.vercel.app/',
-    previewImage: preview('https://proptech-seven.vercel.app/'),
+    previewImage: '/proptech.png',
     size: 'small',
   },
   {
@@ -110,7 +110,7 @@ export const projects: ReadonlyArray<Project> = [
     icon: Globe,
     theme: 'indigo',
     link: 'https://revenue-nexus.vercel.app/',
-    previewImage: preview('https://revenue-nexus.vercel.app/'),
+    previewImage: '/revenue.png',
     size: 'small',
   },
 ] as const;
