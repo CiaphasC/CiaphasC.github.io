@@ -14,7 +14,7 @@ export const projects: ReadonlyArray<Project> = [
     icon: Briefcase,
     theme: 'blue',
     link: 'https://cuenca-asociados.vercel.app/',
-    previewImage: preview('https://cuenca-asociados.vercel.app/'),
+    previewImage: '/cuenca-asociados.png',
     size: 'large',
   },
   {
@@ -50,7 +50,7 @@ export const projects: ReadonlyArray<Project> = [
     icon: Layers,
     theme: 'emerald',
     link: 'https://vsl-2-page.vercel.app/',
-    previewImage: preview('https://vsl-2-page.vercel.app/'),
+    previewImage: '/vsl-2.jpeg',
     size: 'large',
   },
   {

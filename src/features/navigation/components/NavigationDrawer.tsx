@@ -20,90 +20,71 @@ export const NavigationDrawer = ({
   onClose,
   onNavigate,
 }: NavigationDrawerProps) => {
-  const overlayRef = useRef<HTMLButtonElement>(null);
-  const drawerRef = useRef<HTMLElement>(null);
   const navRef = useRef<HTMLElement>(null);
+  const hasOpenedRef = useRef(false);
 
   useLayoutEffect(() => {
-    const overlay = overlayRef.current;
-    const drawer = drawerRef.current;
     const nav = navRef.current;
 
-    if (!overlay || !drawer || !nav) return;
+    if (!nav) return;
 
     const navItems = nav.querySelectorAll<HTMLElement>('[data-nav-item]');
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (prefersReducedMotion) {
-      gsap.set(overlay, { autoAlpha: isOpen ? 1 : 0 });
-      gsap.set(drawer, { xPercent: isOpen ? 0 : 100 });
-      gsap.set(navItems, { autoAlpha: isOpen ? 1 : 0, x: isOpen ? 0 : 18 });
+      gsap.set(navItems, { autoAlpha: isOpen ? 1 : 0, x: isOpen ? 0 : 12 });
       return;
     }
 
-    const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    gsap.killTweensOf(navItems);
 
     if (isOpen) {
-      timeline
-        .set(drawer, { xPercent: 100 })
-        .set(overlay, { autoAlpha: 0 })
-        .to(overlay, { autoAlpha: 1, duration: 0.26 }, 0)
-        .to(drawer, { xPercent: 0, duration: 0.52 }, 0)
-        .fromTo(
-          navItems,
-          { autoAlpha: 0, x: 28 },
-          {
-            autoAlpha: 1,
-            x: 0,
-            duration: 0.42,
-            stagger: 0.055,
-            ease: 'power2.out',
-          },
-          0.14,
-        );
-    } else {
-      timeline
-        .to(
-          navItems,
-          {
-            autoAlpha: 0,
-            x: 16,
-            duration: 0.2,
-            stagger: {
-              each: 0.03,
-              from: 'end',
-            },
-            ease: 'power2.in',
-          },
-          0,
-        )
-        .to(drawer, { xPercent: 100, duration: 0.34, ease: 'power3.in' }, 0.04)
-        .to(overlay, { autoAlpha: 0, duration: 0.22 }, 0.08);
+      gsap.fromTo(
+        navItems,
+        { autoAlpha: 0, x: 26 },
+        {
+          autoAlpha: 1,
+          x: 0,
+          duration: 0.4,
+          stagger: 0.05,
+          ease: 'power2.out',
+          clearProps: 'transform',
+        },
+      );
+      hasOpenedRef.current = true;
+      return;
     }
 
-    return () => {
-      timeline.kill();
-    };
+    if (!hasOpenedRef.current) return;
+
+    gsap.to(navItems, {
+      autoAlpha: 0,
+      x: 12,
+      duration: 0.18,
+      stagger: {
+        each: 0.025,
+        from: 'end',
+      },
+      ease: 'power2.in',
+    });
   }, [isOpen]);
 
   return (
     <>
       <button
-        ref={overlayRef}
         aria-hidden={!isOpen}
         tabIndex={-1}
         onClick={onClose}
         className={cn(
-          'fixed inset-0 z-[60] bg-black/80 backdrop-blur-md',
-          isOpen ? 'pointer-events-auto' : 'pointer-events-none',
+          'fixed inset-0 z-[60] bg-black/80 backdrop-blur-md transition-opacity duration-300',
+          isOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0',
         )}
       />
 
       <aside
-        ref={drawerRef}
         className={cn(
-          'fixed right-0 top-0 z-[70] flex h-full w-[310px] flex-col bg-[#02060c] shadow-[0_16px_56px_-18px_rgba(0,101,145,0.42)]',
-          isOpen ? 'pointer-events-auto' : 'pointer-events-none',
+          'fixed right-0 top-0 z-[70] flex h-full w-[310px] flex-col bg-[#02060c] shadow-[0_16px_56px_-18px_rgba(0,101,145,0.42)] transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)]',
+          isOpen ? 'pointer-events-auto translate-x-0' : 'pointer-events-none translate-x-full',
         )}
         aria-label="Navegacion principal"
       >
