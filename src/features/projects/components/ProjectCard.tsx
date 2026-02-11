@@ -19,14 +19,14 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
 
   return (
     <a href={project.link} target="_blank" rel="noreferrer" className="block h-full">
-      <TiltCard className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-3xl border border-white/5 bg-zinc-900/40 backdrop-blur-md transition-all duration-500 hover:border-white/10 hover:shadow-2xl hover:shadow-black/50">
+      <TiltCard className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#05070d] transition-all duration-500 hover:border-white/15 hover:shadow-2xl hover:shadow-black/60">
         <div className={cn('relative w-full overflow-hidden transition-all duration-700', isLarge ? 'h-48' : 'h-40')}>
           {!previewFailed && (
             <img
               src={project.previewImage}
               alt={`Vista previa de ${project.title}`}
               loading="lazy"
-              className="absolute inset-0 h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+              className="absolute inset-0 h-full w-full object-cover object-top brightness-[0.72] contrast-110 saturate-[0.9] transition-transform duration-700 group-hover:scale-105"
               onError={() => setPreviewFailed(true)}
             />
           )}
@@ -34,18 +34,12 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
           <div
             className={cn(
               'absolute inset-0 bg-gradient-to-br transition-opacity duration-500',
-              previewFailed ? 'opacity-80 group-hover:opacity-100' : 'opacity-70 group-hover:opacity-80',
+              previewFailed ? 'opacity-80 group-hover:opacity-95' : 'opacity-35 group-hover:opacity-45',
               theme.headerGradient,
             )}
           />
 
-          <div
-            className={cn('absolute inset-0', previewFailed ? 'opacity-20' : 'opacity-10')}
-            style={{
-              backgroundImage: 'radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)',
-              backgroundSize: '24px 24px',
-            }}
-          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/25 to-black/75" />
 
           <Icon
             size={isLarge ? 180 : 120}
@@ -66,7 +60,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
           </div>
         </div>
 
-        <div className="relative z-10 flex flex-1 flex-col border-t border-white/5 p-6 md:p-8">
+        <div className="relative z-10 flex flex-1 flex-col border-t border-white/10 bg-[#06090f] p-6 md:p-8">
           <div className="mb-4">
             <div className="mb-2 flex items-center justify-between">
               <span className={cn('text-[10px] font-bold uppercase tracking-[0.2em]', theme.subtitle)}>

@@ -76,7 +76,7 @@ export const NavigationDrawer = ({
         tabIndex={-1}
         onClick={onClose}
         className={cn(
-          'fixed inset-0 z-[60] bg-black/80 backdrop-blur-md transition-opacity duration-300',
+          'fixed inset-0 z-[60] bg-[linear-gradient(90deg,rgba(1,5,12,0.4)_0%,rgba(1,5,12,0.47)_58%,rgba(1,5,12,0.58)_100%)] backdrop-blur-[1.8px] transition-opacity duration-300',
           isOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0',
         )}
       />
