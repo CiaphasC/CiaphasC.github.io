@@ -1,0 +1,549 @@
+import React, { useState, useEffect, useRef } from 'react';
+import * as THREE from 'three';
+import { 
+  Github, 
+  Linkedin, 
+  ArrowUpRight, 
+  Terminal, 
+  Layers,
+  Box,
+  Circle,
+  Menu,
+  X,
+  ChevronDown,
+  MessageCircle,
+  Home,
+  Briefcase,
+  FlaskConical,
+  Mail,
+  Grid,
+  Zap,
+  Server,
+  Shield,
+  Cpu,
+  Code2,
+  Database,
+  Globe,
+  Layout,
+  Smartphone,
+  Eye,
+  Calendar,
+  Monitor
+} from 'lucide-react';
+
+// --- ESTILOS GLOBALES ---
+const GlobalStyles = () => (
+  <style>{`
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #09090b; }
+    ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+    html { scroll-behavior: smooth; }
+    ::selection { background: rgba(99, 102, 241, 0.3); color: #ffffff; }
+    
+    /* Utilitario para texto con gradiente */
+    .text-gradient {
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  `}</style>
+);
+
+// --- DATOS DEL PORTAFOLIO ---
+const PROJECTS = [
+  {
+    title: "Cuenca & Asociados",
+    subtitle: "Auditoría & Finanzas",
+    desc: "Plataforma corporativa integral. Portal de clientes seguro, gestión documental automatizada y CMS a medida para la firma auditora líder.",
+    tags: ["Next.js 15", "Tailwind", "PostgreSQL", "AWS S3"],
+    icon: Briefcase,
+    color: "blue",
+    link: "https://github.com/CiaphasC",
+    size: "large" // Ocupa 2 columnas
+  },
+  {
+    title: "Avalu",
+    subtitle: "Consultoría Estratégica",
+    desc: "Experiencia web inmersiva para consultoría de negocios. Animaciones fluidas que guían al usuario a través de la propuesta de valor.",
+    tags: ["React 19", "GSAP", "Vite"],
+    icon: Globe,
+    color: "indigo",
+    link: "https://github.com/CiaphasC",
+    size: "small"
+  },
+  {
+    title: "Dr. Jonathan Gil Flores",
+    subtitle: "Salud & Bienestar",
+    desc: "Ecosistema digital para cirugía bariátrica. Agendamiento inteligente y optimización SEO técnica para máxima conversión.",
+    tags: ["Next.js", "Radix UI", "Supabase"],
+    icon:  Box, 
+    color: "cyan",
+    link: "https://github.com/CiaphasC",
+    size: "small"
+  },
+  {
+    title: "911 Medical Marketing",
+    subtitle: "SaaS Médico",
+    desc: "Dashboard analítico para cirujanos. Visualización de datos complejos, seguimiento de leads y reportes automatizados en tiempo real.",
+    tags: ["React", "Tremor", ".NET Core", "SQL Server"],
+    icon: Layers,
+    color: "emerald",
+    link: "https://github.com/CiaphasC",
+    size: "large"
+  },
+  {
+    title: "BookNow",
+    subtitle: "Marketplace de Experiencias",
+    desc: "Motor de reservas de alta concurrencia. Gestión de disponibilidad en tiempo real y pasarela de pagos integrada.",
+    tags: ["Node.js", "Redis", "Socket.io"],
+    icon:  Circle,
+    color: "orange",
+    link: "https://github.com/CiaphasC",
+    size: "small"
+  },
+  {
+    title: "L'Élite Gastro",
+    subtitle: "Hospitality Tech",
+    desc: "Menú digital interactivo. UI/UX premium enfocada en la fotografía gastronómica y la facilidad de pedido móvil.",
+    tags: ["React Mobile", "Framer Motion", "Firebase"],
+    icon: Smartphone,
+    color: "purple",
+    link: "https://github.com/CiaphasC",
+    size: "small"
+  },
+  {
+    title: "Aura Hotel System",
+    subtitle: "Desktop Software",
+    desc: "Sistema de gestión hotelera (PMS) robusto. Control de habitaciones, facturación electrónica y reportes financieros.",
+    tags: ["C#", "Avalonia UI", "Entity Framework"],
+    icon: Monitor,
+    color: "rose",
+    link: "https://github.com/CiaphasC",
+    size: "large"
+  },
+  {
+    title: "PropTech Inmobiliaria",
+    subtitle: "Real Estate 3D",
+    desc: "Visualización arquitectónica en la web. Recorridos virtuales interactivos y renderizado de planos en tiempo real.",
+    tags: ["Three.js", "React Fiber", "WebGL"],
+    icon: Box,
+    color: "yellow",
+    link: "https://github.com/CiaphasC",
+    size: "small"
+  }
+];
+
+const TechIcon = ({ tag, className = "w-3 h-3" }) => {
+  const t = tag.toLowerCase();
+  // ... (Misma lógica de iconos anterior)
+  if (t.includes('react')) return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>;
+  if (t.includes('next')) return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M4 4v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2z" /><path d="M9 8l6 8" /><path d="M15 8v8" /><path d="M9 8v8" /></svg>;
+  if (t.includes('tailwind')) return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12.5 7c.7-.7 1.7-1 2.5-1 3 0 4 2 4 5 0 2-1 3-2 3.5-1.5.5-2.5.5-3.5 0C12 13 11 12 10 9c-1-3-2-5-5-5-3 0-4 2-4 5 0 2 1 3 2 3.5.5.3 1.3.5 2.5.5 1.5 0 2.5-2 3.5-4 1-2 2-3 3.5-3z" /><path d="M12.5 13c.7-.7 1.7-1 2.5-1 3 0 4 2 4 5 0 2-1 3-2 3.5-1.5.5-2.5.5-3.5 0C12 19 11 18 10 15c-1-3-2-5-5-5-3 0-4 2-4 5 0 2 1 3 2 3.5.5.3 1.3.5 2.5.5 1.5 0 2.5-2 3.5-4 1-2 2-3 3.5-3z" /></svg>;
+  if (t.includes('c#') || t.includes('.net') || t.includes('core')) return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M10 9l-2 2 2 2" /><path d="M14 9l2 2-2 2" /><path d="M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" /></svg>;
+  if (t.includes('node') || t.includes('nest')) return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 2l9 4.9V17l-9 4.9L3 17V6.9z" /><circle cx="12" cy="12" r="3" /></svg>;
+  if (t.includes('sql') || t.includes('data') || t.includes('base') || t.includes('redis') || t.includes('firebase')) return <Database className={className} />;
+  if (t.includes('three') || t.includes('webgl') || t.includes('fiber')) return <Box className={className} />;
+  if (t.includes('gsap') || t.includes('framer') || t.includes('motion')) return <Zap className={className} />;
+  return <Code2 className={className} />;
+};
+
+// --- CUSTOM HOOKS ---
+const useScrollReveal = (threshold = 0.1, repeat = true) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setIsVisible(true); if (!repeat) observer.unobserve(entry.target); }
+      else if (repeat) setIsVisible(false);
+    }, { threshold, rootMargin: "0px 0px -50px 0px" });
+    if (ref.current) observer.observe(ref.current);
+    return () => { if (ref.current) observer.unobserve(ref.current); };
+  }, [threshold, repeat]);
+  return [ref, isVisible];
+};
+
+const Reveal = ({ children, className = "", delay = 0, blur = true, scale = true }) => {
+  const [ref, isVisible] = useScrollReveal(0.15, false);
+  return (
+    <div ref={ref} style={{ transitionDelay: `${delay}ms` }} className={`transition-all duration-1000 cubic-bezier(0.2, 0.65, 0.3, 0.9) transform ${isVisible ? 'opacity-100 translate-y-0 blur-0 scale-100' : `opacity-0 translate-y-12 ${blur ? 'blur-sm' : ''} ${scale ? 'scale-[0.96]' : ''}`} ${className}`}>
+      {children}
+    </div>
+  );
+};
+
+const ScrambleText = ({ text, className = "" }) => {
+  const [ref, isVisible] = useScrollReveal(0.5, true);
+  const [displayText, setDisplayText] = useState(text);
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;':\",./<>?";
+  useEffect(() => {
+    if (isVisible) {
+      let iteration = 0;
+      let interval = setInterval(() => {
+        setDisplayText(prev => text.split("").map((l, i) => i < iteration ? text[i] : chars[Math.floor(Math.random() * chars.length)]).join(""));
+        if (iteration >= text.length) clearInterval(interval);
+        iteration += 1 / 2;
+      }, 30);
+      return () => clearInterval(interval);
+    }
+  }, [isVisible, text]);
+  return <span ref={ref} className={`${className} inline-block`}>{displayText}</span>;
+};
+
+const StaggerText = ({ text, className = "", delay = 0 }) => {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setTimeout(() => setMounted(true), 100 + delay); }, [delay]);
+  return (
+    <div className={`flex flex-wrap overflow-hidden ${className}`}>
+      {text.split("").map((char, index) => (
+        <span key={index} className="inline-block transition-all duration-1000 cubic-bezier(0.2, 0.65, 0.3, 0.9)" style={{ transform: mounted ? 'translateY(0) scale(1)' : 'translateY(100%) scale(1.1)', opacity: mounted ? 1 : 0, filter: mounted ? 'blur(0px)' : 'blur(12px)', transitionDelay: `${index * 30}ms` }}>
+          {char === " " ? "\u00A0" : char}
+        </span>
+      ))}
+    </div>
+  );
+};
+
+const TiltCard = ({ children, className = "" }) => {
+  const cardRef = useRef(null);
+  const [rotation, setRotation] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState({ x: 50, y: 50 });
+  const [isHovered, setIsHovered] = useState(false);
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setRotation({ x: ((y - rect.height / 2) / rect.height / 2) * -3, y: ((x - rect.width / 2) / rect.width / 2) * 3 }); // Reducido para ser sutil
+    setPosition({ x: (x / rect.width) * 100, y: (y / rect.height) * 100 });
+  };
+  return (
+    <div ref={cardRef} onMouseMove={handleMouseMove} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => { setIsHovered(false); setRotation({ x: 0, y: 0 }); }} className={`relative transition-transform duration-300 ease-out transform-gpu ${className}`} style={{ transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) scale3d(${isHovered ? 1.01 : 1}, ${isHovered ? 1.01 : 1}, 1)` }}>
+      {/* Luz ambiental sutil */}
+      <div className="absolute inset-0 z-0 transition-opacity duration-500 pointer-events-none rounded-2xl" style={{ background: `radial-gradient(circle at ${position.x}% ${position.y}%, rgba(255,255,255,0.06) 0%, transparent 50%)`, opacity: isHovered ? 1 : 0 }} />
+      <div className="relative z-10 h-full">{children}</div>
+    </div>
+  );
+};
+
+const Typewriter = ({ text, delay = 80, deleteDelay = 50, waitTime = 2500, startDelay = 0, className = "" }) => {
+  const [currentText, setCurrentText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+  useEffect(() => { setTimeout(() => setHasStarted(true), startDelay); }, [startDelay]);
+  useEffect(() => {
+    if (!hasStarted) return;
+    let timer;
+    if (!isDeleting && currentText.length < text.length) timer = setTimeout(() => setCurrentText(text.slice(0, currentText.length + 1)), delay);
+    else if (!isDeleting && currentText.length === text.length) timer = setTimeout(() => setIsDeleting(true), waitTime);
+    else if (isDeleting && currentText.length > 1) timer = setTimeout(() => setCurrentText(text.slice(0, currentText.length - 1)), deleteDelay);
+    else if (isDeleting && currentText.length === 1) timer = setTimeout(() => setIsDeleting(false), 500);
+    return () => clearTimeout(timer);
+  }, [currentText, isDeleting, hasStarted, text, delay, deleteDelay, waitTime]);
+  return <span className={`${className} inline-block min-h-[1.5em]`}>{currentText}<span className="animate-pulse ml-1 text-indigo-500 font-bold">|</span></span>;
+};
+
+// --- COMPONENTES DE NAVEGACIÓN (Estables) ---
+const NavItem = ({ label, icon: Icon, theme, isActive, onClick, delay }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  useEffect(() => { const timer = setTimeout(() => setIsVisible(true), delay); return () => clearTimeout(timer); }, [delay]);
+  const themes = {
+    blue: { active: 'bg-gradient-to-r from-blue-600/30 via-blue-900/10 to-transparent border-l-4 border-blue-500', iconBg: 'bg-blue-500/20 text-blue-400', dot: 'bg-blue-500', glow: 'shadow-[0_0_25px_-5px_rgba(59,130,246,0.4)]' },
+    purple: { active: 'bg-gradient-to-r from-purple-600/30 via-purple-900/10 to-transparent border-l-4 border-purple-500', iconBg: 'bg-purple-500/20 text-purple-300', dot: 'bg-purple-500', glow: 'shadow-[0_0_25px_-5px_rgba(168,85,247,0.4)]' },
+    cyan: { active: 'bg-gradient-to-r from-cyan-600/30 via-cyan-900/10 to-transparent border-l-4 border-cyan-500', iconBg: 'bg-cyan-500/20 text-cyan-300', dot: 'bg-cyan-400', glow: 'shadow-[0_0_25px_-5px_rgba(34,211,238,0.4)]' },
+    orange: { active: 'bg-gradient-to-r from-orange-600/30 via-orange-900/10 to-transparent border-l-4 border-orange-500', iconBg: 'bg-orange-500/20 text-orange-300', dot: 'bg-orange-500', glow: 'shadow-[0_0_25px_-5px_rgba(249,115,22,0.4)]' }
+  };
+  const currentTheme = themes[theme];
+  return (
+    <button onClick={onClick} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} style={{ transform: isVisible ? 'translateX(0)' : 'translateX(20px)', opacity: isVisible ? 1 : 0, transition: 'all 0.4s cubic-bezier(0.25, 1, 0.5, 1)', transitionDelay: `${delay * 0.5}ms` }} className={`relative w-full p-3 mb-2 flex items-center gap-4 rounded-r-xl rounded-l-md transition-all duration-300 group overflow-hidden ${isActive ? `${currentTheme.active} ${currentTheme.glow}` : 'hover:bg-white/5'}`}>
+      <div className={`relative z-10 w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 ${isActive ? currentTheme.iconBg : 'bg-zinc-800/50 text-zinc-500 group-hover:bg-zinc-700/50 group-hover:text-zinc-300'}`}><Icon size={18} strokeWidth={isActive ? 2.5 : 2} /></div>
+      <span className={`text-[15px] font-medium tracking-wide transition-colors duration-300 relative z-10 ${isActive ? 'text-white' : 'text-zinc-500 group-hover:text-zinc-200'}`}>{label}</span>
+      <div className={`absolute right-4 w-1.5 h-1.5 rounded-full transition-all duration-500 ${currentTheme.dot}`} style={{ opacity: isActive ? 1 : 0, boxShadow: isActive ? `0 0 10px ${currentTheme.dot}, 0 0 20px ${currentTheme.dot}` : 'none', transform: isActive ? 'scale(1)' : 'scale(0)' }} />
+    </button>
+  );
+};
+
+const NavigationDrawer = ({ isOpen, onClose, activeSection, scrollTo }) => {
+  const menuItems = [{ id: 'inicio', label: 'Inicio', icon: Home, theme: 'blue' }, { id: 'proyectos', label: 'Proyectos', icon: Grid, theme: 'purple' }, { id: 'laboratorio', label: 'Laboratorio', icon: FlaskConical, theme: 'cyan' }, { id: 'contacto', label: 'Contacto', icon: Mail, theme: 'orange' }];
+  return (
+    <>
+      <div onClick={onClose} className={`fixed inset-0 bg-black/80 backdrop-blur-md z-[60] transition-opacity duration-500 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`} />
+      <div className={`fixed top-0 right-0 h-full w-[300px] bg-[#0c0c0e] border-l border-white/5 z-[70] shadow-2xl transform transition-transform duration-500 cubic-bezier(0.2, 0.8, 0.2, 1) flex flex-col ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+        <div className="px-6 py-8 flex justify-between items-center"><span className="text-xs font-bold text-zinc-500 tracking-[0.2em] uppercase pl-2">Navegación</span><button onClick={onClose} className="p-2 rounded-full hover:bg-white/5 text-zinc-500 hover:text-white transition-all"><X size={20} /></button></div>
+        <div className="flex-1 px-4 space-y-2 overflow-y-auto">{menuItems.map((item, index) => (<NavItem key={item.id} label={item.label} icon={item.icon} theme={item.theme} isActive={activeSection === item.id} delay={index * 50} onClick={() => scrollTo(item.id)} />))}</div>
+        <div className="p-4 mt-auto"><div className="mb-3 px-2 text-[10px] font-bold tracking-widest text-zinc-600 uppercase">System Status</div><div className="relative p-4 rounded-xl overflow-hidden group bg-gradient-to-r from-pink-900/40 to-pink-950/20 border border-pink-500/20 shadow-[0_0_30px_-5px_rgba(236,72,153,0.15)]"><div className="relative z-10 flex items-center gap-4"><div className="w-10 h-10 rounded-lg bg-pink-500/10 flex items-center justify-center text-pink-400 border border-pink-500/10 shadow-[0_0_15px_rgba(236,72,153,0.1)]"><Zap size={20} fill="currentColor" /></div><div><div className="text-[14px] text-white font-semibold leading-tight mb-0.5">High Performance</div><div className="text-[11px] text-pink-300/60 font-medium">All systems operational</div></div><div className="ml-auto w-1.5 h-1.5 bg-pink-500 rounded-full shadow-[0_0_10px_#ec4899]" /></div><div className="absolute top-0 right-0 w-20 h-20 bg-pink-500/10 blur-[40px] rounded-full pointer-events-none" /></div></div>
+      </div>
+    </>
+  );
+};
+
+// --- THREE.JS BACKGROUND ---
+const ThreeVoidBackground = () => {
+  const mountRef = useRef(null);
+  useEffect(() => {
+    if (!mountRef.current) return;
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x000000, 0.0015);
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+    camera.position.set(0, 20, 100);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    mountRef.current.appendChild(renderer.domElement);
+    const particleCount = 4000;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount; i++) {
+      positions[i * 3] = (Math.random() - 0.5) * 400;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 400;
+    }
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const material = new THREE.PointsMaterial({ size: 0.4, color: 0xffffff, transparent: true, opacity: 0.6, sizeAttenuation: true });
+    const particles = new THREE.Points(geometry, material);
+    scene.add(particles);
+    let animationId;
+    const animate = () => {
+      animationId = requestAnimationFrame(animate);
+      const scrollY = window.scrollY;
+      const targetZ = scrollY * 0.1;
+      camera.position.z = 100 - (targetZ * 0.05); 
+      camera.position.y = 20 + (scrollY * 0.02);
+      particles.rotation.y = scrollY * 0.0002;
+      renderer.render(scene, camera);
+    };
+    animate();
+    const handleResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animationId);
+      if (mountRef.current && renderer.domElement) mountRef.current.removeChild(renderer.domElement);
+      geometry.dispose();
+      material.dispose();
+      renderer.dispose();
+    };
+  }, []);
+  return <div ref={mountRef} className="fixed inset-0 z-0 bg-black pointer-events-none" />;
+};
+
+// --- PREMIUM PROJECT CARD (BENTO STYLE) ---
+const ProjectCard = ({ title, subtitle, desc, icon: Icon, tags, color = "indigo", link, size }) => {
+  // Ajuste de tamaño para grid bento
+  const isLarge = size === "large";
+  
+  return (
+    <div className={`h-full ${isLarge ? 'md:col-span-2' : 'md:col-span-1'}`}>
+      <TiltCard className="group h-full border border-white/5 hover:border-white/10 rounded-3xl bg-zinc-900/40 backdrop-blur-md cursor-pointer overflow-hidden flex flex-col transition-all duration-500 hover:shadow-2xl hover:shadow-black/50" onClick={() => window.open(link, '_blank')}>
+        
+        {/* Cabecera Abstracta con Efecto Glow */}
+        <div className={`relative w-full ${isLarge ? 'h-48' : 'h-40'} overflow-hidden transition-all duration-700`}>
+          {/* Fondo Gradiente Dinámico */}
+          <div className={`absolute inset-0 bg-gradient-to-br from-${color}-500/10 via-zinc-900 to-black opacity-80 group-hover:opacity-100 transition-opacity duration-500`} />
+          
+          {/* Patrón de Ruido/Grid Sutil */}
+          <div className="absolute inset-0 opacity-20" 
+               style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '24px 24px' }}>
+          </div>
+
+          {/* Icono Flotante Grande (Decorativo) */}
+          <Icon 
+            size={isLarge ? 180 : 120} 
+            className={`absolute -bottom-4 -right-4 text-${color}-500/5 group-hover:text-${color}-500/10 transition-all duration-700 transform group-hover:scale-110 group-hover:rotate-12`} 
+          />
+
+          {/* Badge del Icono Principal */}
+          <div className="absolute bottom-4 left-6 p-3 bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10 shadow-lg group-hover:scale-110 transition-transform duration-300">
+            <Icon size={24} className={`text-${color}-400`} />
+          </div>
+
+          {/* Botón Preview (Aparece en Hover) */}
+          <div className="absolute top-4 right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+            <div className="flex items-center gap-2 px-4 py-2 bg-white/90 text-black text-xs font-bold uppercase tracking-wider rounded-full shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+              <Eye size={12} /> Live Demo
+            </div>
+          </div>
+        </div>
+
+        {/* Contenido de la Tarjeta */}
+        <div className="p-6 md:p-8 flex flex-col flex-1 relative z-10 border-t border-white/5">
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className={`text-[10px] font-bold uppercase tracking-[0.2em] text-${color}-400/80`}>{subtitle}</span>
+              <ArrowUpRight size={16} className="text-zinc-600 group-hover:text-white transition-colors duration-300" />
+            </div>
+            <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-zinc-400 transition-all duration-300">
+              {title}
+            </h3>
+          </div>
+          
+          <p className="text-zinc-400 text-sm leading-relaxed mb-8 flex-1 group-hover:text-zinc-300 transition-colors">
+            {desc}
+          </p>
+          
+          {/* Tags con estilo Pill Glass */}
+          <div className="flex flex-wrap gap-2 mt-auto">
+            {tags.map(tag => (
+              <div key={tag} className="flex items-center gap-1.5 text-[10px] uppercase font-bold text-zinc-500 bg-zinc-900/50 border border-white/5 px-2.5 py-1.5 rounded-lg group-hover:border-white/10 group-hover:bg-white/5 group-hover:text-zinc-300 transition-all duration-300">
+                <TechIcon tag={tag} className="w-3 h-3 opacity-70" />
+                <span>{tag}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </TiltCard>
+    </div>
+  );
+};
+
+// --- MAIN APP ---
+
+export default function App() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('inicio');
+  const scrollToSection = (id) => {
+    setActiveSection(id);
+    const element = document.getElementById(id);
+    if (element) { element.scrollIntoView({ behavior: 'smooth' }); }
+  };
+
+  return (
+    <div className="min-h-screen bg-black text-zinc-100 font-sans selection:bg-indigo-500 selection:text-white overflow-x-hidden">
+      <GlobalStyles />
+      <ThreeVoidBackground />
+      <nav className="fixed top-0 inset-x-0 z-50 p-6 mix-blend-difference text-white">
+        <div className="max-w-screen-2xl mx-auto flex justify-between items-center">
+          <a href="#" className="text-xl font-bold tracking-tighter hover:opacity-70 transition-opacity drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">CiaphasC<span className="text-zinc-500">.dev</span></a>
+          <button onClick={() => setIsMenuOpen(true)} className="group flex items-center gap-2 text-sm font-medium hover:text-zinc-400 transition-colors pointer-events-auto">
+            <span className="hidden md:block opacity-0 group-hover:opacity-100 transition-opacity duration-300">MENU</span>
+            <Menu size={24} />
+          </button>
+        </div>
+      </nav>
+      <NavigationDrawer isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} activeSection={activeSection} scrollTo={scrollToSection} />
+      <main className="relative z-10">
+        <section id="inicio" className="min-h-screen flex flex-col justify-center px-6 md:px-12 max-w-screen-2xl mx-auto pt-20 relative">
+          <div className="absolute top-1/4 right-0 w-96 h-96 bg-indigo-600/10 rounded-full blur-[128px] pointer-events-none" />
+          <div className="relative mb-4">
+            <h1 className="text-[12vw] leading-[0.85] font-bold tracking-tighter text-white mix-blend-overlay opacity-90 select-none drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]">
+              <StaggerText text="SYSTEMS" delay={200} />
+              <StaggerText text="ENGINEER" delay={500} />
+            </h1>
+          </div>
+          <Reveal delay={800} className="mt-12 flex flex-col md:flex-row justify-between items-end gap-8 border-t border-white/10 pt-8">
+            <div className="max-w-md">
+              <div className="text-lg text-zinc-300 font-light leading-relaxed h-20 md:h-auto">
+                <span className="text-zinc-500 font-mono text-sm block mb-2">&gt; SYSTEM.INIT_USER_PROFILE()</span>
+                <Typewriter text="Brad Richard Cuenca Candela." startDelay={1500} delay={60} waitTime={3000} deleteDelay={50} className="font-semibold text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]" />
+                <br/>
+                <span className="text-zinc-400">Arquitectura de software minimalista y experiencias web de alto impacto.</span>
+              </div>
+            </div>
+            <div className="flex gap-6">
+              <a href="https://github.com/CiaphasC" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group">
+                <Github size={20} className="group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" /> 
+                <span className="text-sm font-mono group-hover:underline decoration-zinc-500 underline-offset-4">GITHUB</span>
+              </a>
+            </div>
+          </Reveal>
+          <div className="absolute bottom-12 left-6 md:left-12 animate-pulse text-zinc-600"><ChevronDown /></div>
+        </section>
+        
+        {/* SECCIÓN PROYECTOS REDISEÑADA (BENTO GRID) */}
+        <section id="proyectos" className="py-32 px-6 md:px-12 max-w-screen-2xl mx-auto relative">
+          <div className="absolute left-0 top-1/2 w-64 h-64 bg-blue-900/10 rounded-full blur-[96px] pointer-events-none" />
+          <Reveal>
+            <div className="flex items-baseline gap-4 mb-20">
+              <h2 className="text-sm font-mono text-indigo-400 uppercase tracking-widest drop-shadow-[0_0_5px_rgba(129,140,248,0.5)]">[ 01 ]</h2>
+              <ScrambleText text="Proyectos Seleccionados" className="text-2xl font-light text-white" />
+            </div>
+          </Reveal>
+          
+          {/* GRID ASIMÉTRICO */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
+            {PROJECTS.map((project, idx) => (
+              <Reveal key={idx} delay={100 * (idx % 3 + 1)} blur={false} scale={true} className={project.size === 'large' ? 'md:col-span-2' : 'md:col-span-1'}>
+                <ProjectCard 
+                  {...project}
+                />
+              </Reveal>
+            ))}
+          </div>
+        </section>
+
+        {/* STACK / ABOUT */}
+        <section id="laboratorio" className="py-32 bg-zinc-900/20 border-y border-white/5 backdrop-blur-sm relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5" />
+          <div className="px-6 md:px-12 max-w-screen-2xl mx-auto grid md:grid-cols-2 gap-20 relative z-10">
+            <Reveal>
+              <div className="flex items-baseline gap-4 mb-8">
+                <h2 className="text-sm font-mono text-indigo-400 uppercase tracking-widest drop-shadow-[0_0_5px_rgba(129,140,248,0.5)]">[ 02 ]</h2>
+                <ScrambleText text="Ingeniería" className="text-2xl font-light text-white" />
+              </div>
+              <p className="text-2xl md:text-3xl text-zinc-300 font-light leading-snug">
+                Mi enfoque combina rigor técnico con sensibilidad estética. 
+                Creo interfaces que no solo funcionan rápido, sino que se sienten <span className="text-white font-normal italic drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">inevitables</span>.
+              </p>
+            </Reveal>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-10">
+              <Reveal delay={200}>
+                <h3 className="text-zinc-500 text-xs font-mono uppercase tracking-widest mb-4 flex items-center gap-2"><Layout size={14}/> Frontend & UI</h3>
+                <ul className="space-y-2 text-zinc-300 font-light text-sm">
+                  <li className="hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] transition-all cursor-default">React 19 / Next.js 15</li>
+                  <li className="hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] transition-all cursor-default">Tailwind CSS v4</li>
+                  <li className="hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] transition-all cursor-default">Three.js / R3F / GSAP</li>
+                  <li className="hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] transition-all cursor-default">Shadcn/UI / Radix</li>
+                </ul>
+              </Reveal>
+              <Reveal delay={300}>
+                <h3 className="text-zinc-500 text-xs font-mono uppercase tracking-widest mb-4 flex items-center gap-2"><Server size={14}/> Backend & Core</h3>
+                <ul className="space-y-2 text-zinc-300 font-light text-sm">
+                  <li className="hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] transition-all cursor-default">Node.js / NestJS</li>
+                  <li className="hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] transition-all cursor-default">.NET Core (C#) / Avalonia</li>
+                  <li className="hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] transition-all cursor-default">Python / C++</li>
+                  <li className="hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] transition-all cursor-default">Microservicios gRPC</li>
+                </ul>
+              </Reveal>
+              <Reveal delay={400}>
+                <h3 className="text-zinc-500 text-xs font-mono uppercase tracking-widest mb-4 flex items-center gap-2"><Database size={14}/> Data & Cloud</h3>
+                <ul className="space-y-2 text-zinc-300 font-light text-sm">
+                  <li className="hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] transition-all cursor-default">PostgreSQL / SQL Server</li>
+                  <li className="hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] transition-all cursor-default">Supabase / Firebase</li>
+                  <li className="hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] transition-all cursor-default">Redis / Prisma ORM</li>
+                  <li className="hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] transition-all cursor-default">Docker / CI/CD</li>
+                </ul>
+              </Reveal>
+              <Reveal delay={500}>
+                <h3 className="text-zinc-500 text-xs font-mono uppercase tracking-widest mb-4 flex items-center gap-2"><Code2 size={14}/> Arquitectura</h3>
+                <ul className="space-y-2 text-zinc-300 font-light text-sm">
+                  <li className="hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] transition-all cursor-default">Clean Architecture</li>
+                  <li className="hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] transition-all cursor-default">Domain Driven Design</li>
+                  <li className="hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] transition-all cursor-default">SOLID Principles</li>
+                  <li className="hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] transition-all cursor-default">Optimization & Perf</li>
+                </ul>
+              </Reveal>
+            </div>
+          </div>
+        </section>
+        <section id="contacto" className="py-40 px-6 md:px-12 max-w-screen-2xl mx-auto flex flex-col items-center text-center relative">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[128px] pointer-events-none" />
+          <Reveal>
+            <h2 className="text-5xl md:text-8xl font-bold tracking-tighter text-white mb-10 drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]">HABLEMOS</h2>
+            <a href="https://wa.me/51943504753" target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 px-8 py-4 bg-white text-black font-medium rounded-full hover:bg-zinc-100 transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_40px_rgba(255,255,255,0.5)]">
+              Iniciar Proyecto <MessageCircle size={20} className="text-indigo-600" />
+            </a>
+          </Reveal>
+          <div className="mt-32 w-full flex flex-col md:flex-row justify-between items-center border-t border-white/10 pt-8 text-zinc-600 text-sm font-mono">
+            <p>© {new Date().getFullYear()} CIAPHASC.</p>
+            <p className="flex items-center gap-2"><span className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.8)]"></span>SYSTEMS OPERATIONAL</p>
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+}
