@@ -2,6 +2,8 @@ import { Briefcase, Box, Circle, Globe, Layers, Monitor, Smartphone } from 'luci
 
 import type { Project } from '@/shared/types/portfolio';
 
+const preview = (url: string): string => `https://image.thum.io/get/width/1200/noanimate/${url}`;
+
 export const projects: ReadonlyArray<Project> = [
   {
     title: 'Cuenca & Asociados',
@@ -11,7 +13,8 @@ export const projects: ReadonlyArray<Project> = [
     tags: ['Next.js 15', 'Tailwind', 'PostgreSQL', 'AWS S3'],
     icon: Briefcase,
     theme: 'blue',
-    link: 'https://github.com/CiaphasC',
+    link: 'https://cuenca-asociados.vercel.app/',
+    previewImage: preview('https://cuenca-asociados.vercel.app/'),
     size: 'large',
   },
   {
@@ -22,7 +25,8 @@ export const projects: ReadonlyArray<Project> = [
     tags: ['React 19', 'GSAP', 'Vite'],
     icon: Globe,
     theme: 'indigo',
-    link: 'https://github.com/CiaphasC',
+    link: 'https://devciaphasavalu.vercel.app/',
+    previewImage: preview('https://devciaphasavalu.vercel.app/'),
     size: 'small',
   },
   {
@@ -33,7 +37,8 @@ export const projects: ReadonlyArray<Project> = [
     tags: ['Next.js', 'Radix UI', 'Supabase'],
     icon: Box,
     theme: 'cyan',
-    link: 'https://github.com/CiaphasC',
+    link: 'https://drjonathangilbariatra.com/',
+    previewImage: preview('https://drjonathangilbariatra.com/'),
     size: 'small',
   },
   {
@@ -44,7 +49,8 @@ export const projects: ReadonlyArray<Project> = [
     tags: ['React', 'Tremor', '.NET Core', 'SQL Server'],
     icon: Layers,
     theme: 'emerald',
-    link: 'https://github.com/CiaphasC',
+    link: 'https://vsl-2-page.vercel.app/',
+    previewImage: preview('https://vsl-2-page.vercel.app/'),
     size: 'large',
   },
   {
@@ -55,7 +61,8 @@ export const projects: ReadonlyArray<Project> = [
     tags: ['Node.js', 'Redis', 'Socket.io'],
     icon: Circle,
     theme: 'orange',
-    link: 'https://github.com/CiaphasC',
+    link: 'https://book-now-xi.vercel.app/',
+    previewImage: preview('https://book-now-xi.vercel.app/'),
     size: 'small',
   },
   {
@@ -66,7 +73,8 @@ export const projects: ReadonlyArray<Project> = [
     tags: ['React Mobile', 'Framer Motion', 'Firebase'],
     icon: Smartphone,
     theme: 'violet',
-    link: 'https://github.com/CiaphasC',
+    link: 'https://l-elite-gastro.vercel.app/',
+    previewImage: preview('https://l-elite-gastro.vercel.app/'),
     size: 'small',
   },
   {
@@ -77,18 +85,32 @@ export const projects: ReadonlyArray<Project> = [
     tags: ['C#', 'Avalonia UI', 'Entity Framework'],
     icon: Monitor,
     theme: 'rose',
-    link: 'https://github.com/CiaphasC',
+    link: 'https://aura-hotel-system.vercel.app/',
+    previewImage: preview('https://aura-hotel-system.vercel.app/'),
     size: 'large',
   },
   {
     title: 'PropTech Inmobiliaria',
-    subtitle: 'Real Estate 3D',
+    subtitle: 'Plataforma Inmobiliaria',
     description:
-      'Visualizacion arquitectonica en la web. Recorridos virtuales interactivos y renderizado de planos en tiempo real.',
-    tags: ['Three.js', 'React Fiber', 'WebGL'],
+      'Plataforma inmobiliaria moderna con catalogo de propiedades, busqueda avanzada y dashboard administrativo. Incluye experiencia visual premium con efectos 3D y arquitectura Feature-Sliced Design.',
+    tags: ['React 18', 'TypeScript 5.8', 'Vite 6', 'Tailwind 3.4', 'Three.js 0.172'],
     icon: Box,
     theme: 'yellow',
-    link: 'https://github.com/CiaphasC',
+    link: 'https://proptech-seven.vercel.app/',
+    previewImage: preview('https://proptech-seven.vercel.app/'),
+    size: 'small',
+  },
+  {
+    title: 'Revenue Nexus',
+    subtitle: 'CRM / Workspace Demo',
+    description:
+      'Demo SaaS premium con flujo CRM/Workspace, animaciones de luz y componentes listos para produccion. Adaptada a espanol y moneda local (PEN) para mercados LATAM.',
+    tags: ['Next.js 15', 'React 19', 'Tailwind v4', 'OKLCH', 'shadcn/ui'],
+    icon: Globe,
+    theme: 'indigo',
+    link: 'https://revenue-nexus.vercel.app/',
+    previewImage: preview('https://revenue-nexus.vercel.app/'),
     size: 'small',
   },
 ] as const;

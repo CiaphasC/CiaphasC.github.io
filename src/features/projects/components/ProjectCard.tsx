@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { ArrowUpRight, Eye } from 'lucide-react';
 
 import { TiltCard } from '@/shared/components/effects/TiltCard';
@@ -14,15 +15,32 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
   const theme = projectThemeClasses[project.theme];
   const Icon = project.icon;
   const isLarge = project.size === 'large';
+  const [previewFailed, setPreviewFailed] = useState(false);
 
   return (
     <a href={project.link} target="_blank" rel="noreferrer" className="block h-full">
       <TiltCard className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-3xl border border-white/5 bg-zinc-900/40 backdrop-blur-md transition-all duration-500 hover:border-white/10 hover:shadow-2xl hover:shadow-black/50">
         <div className={cn('relative w-full overflow-hidden transition-all duration-700', isLarge ? 'h-48' : 'h-40')}>
-          <div className={cn('absolute inset-0 bg-gradient-to-br opacity-80 transition-opacity duration-500 group-hover:opacity-100', theme.headerGradient)} />
+          {!previewFailed && (
+            <img
+              src={project.previewImage}
+              alt={`Vista previa de ${project.title}`}
+              loading="lazy"
+              className="absolute inset-0 h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+              onError={() => setPreviewFailed(true)}
+            />
+          )}
 
           <div
-            className="absolute inset-0 opacity-20"
+            className={cn(
+              'absolute inset-0 bg-gradient-to-br transition-opacity duration-500',
+              previewFailed ? 'opacity-80 group-hover:opacity-100' : 'opacity-70 group-hover:opacity-80',
+              theme.headerGradient,
+            )}
+          />
+
+          <div
+            className={cn('absolute inset-0', previewFailed ? 'opacity-20' : 'opacity-10')}
             style={{
               backgroundImage: 'radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)',
               backgroundSize: '24px 24px',

@@ -21,6 +21,7 @@ export interface Project {
   icon: LucideIcon;
   theme: ProjectTheme;
   link: string;
+  previewImage: string;
   size: ProjectSize;
 }
 
